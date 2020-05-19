@@ -1,4 +1,4 @@
-0. Go to the appropriate page to download the example duration table, save it as 490_590_time.csv the columns are
+0. Go to the appropriate page to download the example duration table(copy/paste is easier with chrome browser, paste it into a google sheet), save it as 490_590_time.csv the columns are
 LASTNAME	FIRSTNAME	USERNAME	GRADE	ATTEMPT NUMBER	DATE	STATUS	DURATION
 (must have columns: LASTNAME FIRSTNAME	USERNAME DURATION )
 1. download all assignments: From the gradebook, click on the small arrow by the "Final Exam - Time Lapse" column, and choose "Assignment File Download"
