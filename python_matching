@@ -1,0 +1,59 @@
+#/usr/bin/env python
+import sys
+test_duration={}
+raw_input_=sys.argv
+if not len(sys.argv)==7:
+	print "Not Enough arguments!"
+	print "python_matching <path to testtimecsv> <column# for last name in testtimecsv> <column# for first name in testtimecsv> <column# for ubid in testtimecsv> <column# for Duration in testtimecsv> <path to videotimecsv>"
+	sys.exit()
+
+testtimefile=raw_input_[1]
+testtimefilelast=int(raw_input_[2])
+testtimefilefirst=int(raw_input_[3])
+testtimefileubid=int(raw_input_[4])
+testtimefileduration=int(raw_input_[5])
+videotimefile=raw_input_[6]
+
+
+#print testtimefile,testtimefilelast,testtimefilefirst,testtimefileubid,testtimefileduration,videotimefile
+
+with open(testtimefile, 'r') as fcr:
+	line =fcr.readline()
+	cnt=1
+	while line:
+		print line
+		if cnt>1:
+			rawline=line.split(',')
+			last=line.split(',')[testtimefilelast]
+			first=line.split(',')[testtimefilefirst]
+			username=line.split(',')[testtimefileubid].strip('"').split('@')[0]
+			Duration_raw=line.split(',')[testtimefileduration].split(':')
+			Duration=int(Duration_raw[0])*3600+int(Duration_raw[1])*60+float(Duration_raw[2])
+			test_duration[username]=(Duration,first,last)
+
+		line=fcr.readline()
+		cnt+=1	
+
+with open(videotimefile, 'r') as fcr:
+	line =fcr.readline()
+	cnt=1
+	while line:
+		if cnt>1:
+			rawline=line.split(',')
+			username=rawline[0]
+			videoduration=rawline[1]
+			fps=rawline[2]
+						
+			if not videoduration =="NULL":
+				result=(test_duration[username][0]/float(fps)+5)>(float(videoduration)+3)
+				if result is True:
+					print test_duration[username][1],test_duration[username][2],username,"Testduration: "+str(test_duration[username][0])+" seconds."+"Expected Video duratioin:"+str(test_duration[username][0]/float(fps)+5)+" seconds. Video duration:"+videoduration+" seconds at "+fps+" fps"+"Note:tbr,tbn,tbc",rawline[3:6]
+			else:
+				result="UNKNOWN"
+				print test_duration[username][1],test_duration[username][2],username,"VIDEO unreadable"
+
+		line=fcr.readline()
+		cnt+=1	
+
+
+

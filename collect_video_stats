@@ -1,0 +1,23 @@
+#!/bin/bash
+#fps,tbr,tbn,tbc are the relevant info provided by ffmpeg
+IFS=$'\n' #internal delimiter to \n
+for file in $( ls -1 *.mov *.MOV *.mp4 *.MP4 | sort ); do
+  STR=$(ffmpeg -i $file 2>&1 | sed -n 's/.*lapse_\(.*\)_attempt.*/\1/p; s/\(.*\), \(.*\) fps, \(.*\) tbr, \(.*\) tbn, \(.*\) tbc.*/\2,\3,\4,\5/p; s/.*Duration: \([^,]*\),.*/\1/p')   #sed -n 's/pattern1/pattern2/p' sub pattern1 with pattern 2, print it
+  #echo $STR
+  for str in $STR; do          # there should be 3 fields
+    #echo $str
+    if [[ $str =~ .*:.*:.* ]]; #remember to add those spaces in if [[ $a =~ $b ]]  #change hour:minute:seconds to minute
+    then 
+      echo $str |awk -F: '/.*:.*:.*/{printf ($1*3600)+($2*60)+$3","}'
+
+    elif [[ $str == "N/A" ]]; #if N/A detected fill in the blank
+    then 
+      printf "NULL,NULL,NULL,NULL,NULL\n"
+    elif [[ $str == [0-9]*,[0-9]*,[0-9]*,[0-9]* ]]; #if simple number detected we know it is fps, type new line
+    then 
+      printf $str"\n"
+    else                      #ubit name follow by ,
+      printf $str","
+    fi
+  done 
+done
